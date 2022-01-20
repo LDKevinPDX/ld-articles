@@ -8,18 +8,18 @@ In this post, we'll explore a couple of popular edge function solutions and see 
 
 ## How the serverless edge functions work
 
-One of the key aspects of most edge computing offerings from cloud providers is the concept of an "edge function". A typical serverless function is deployed to a single region on the cloud provider's platform. However, edge functions are typically replicated (automatically) across multiple regions globally. This means that any call to the function will hit the region closest to the client, making these functions even faster than a typical serverless function would perform.
+One of the key aspects of most edge computing offerings from cloud providers is the concept of an "edge function." A typical serverless function is deployed to a single region on the cloud provider's platform. However, edge functions are typically replicated (automatically) across multiple regions globally. This means that any call to the function will hit the region closest to the client, making these functions even faster than a typical serverless function would perform.
 
 Two popular solutions for edge functions are:
 
-* [AWS Lambda@Edge](https://aws.amazon.com/lambda/edge/) – This is AWS's offering for globally replicated Lambda functions. AWS also offers [Cloudfront functions](https://aws.amazon.com/blogs/aws/introducing-cloudfront-functions-run-your-code-at-the-edge-with-low-latency-at-any-scale/) that are deployed at the CDN level, but they are intentionally limited in what they can do.
+* [AWS Lambda@Edge](https://aws.amazon.com/lambda/edge/) – This is AWS's offering for globally-replicated Lambda functions. AWS also offers [Cloudfront functions](https://aws.amazon.com/blogs/aws/introducing-cloudfront-functions-run-your-code-at-the-edge-with-low-latency-at-any-scale/) that are deployed at the content delivery network (CDN) level, but they are intentionally limited in what they can do.
 * [Cloudflare Workers](https://workers.cloudflare.com/) – Every serverless function on Cloudflare is an edge function. They are deployed and replicated at the CDN level across Cloudflare's global CDN network. However, unlike Cloudflare Functions, they are not limited in their capabilities due to being deployed on the CDN.
 
 You can use LaunchDarkly to do things like a percentage rollout of changes or A/B testing without any client-side code, becuase the flags are evaluated and the content is modified before the client ever receives the response. Let's explore how you can use LaunchDarkly within both Lambda@Edge and Cloudflare Workers.
 
 ## Using LaunchDarkly with Lambda@Edge
 
-For the most part, a Lambda@Edge function is the same as a regular Lambda function. There are some limitations on region, environment variables and runtime that can come into play in some cases. You can read more about these [restrictions here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/edge-functions-restrictions.html#lambda-at-edge-function-restrictions).
+For the most part, a Lambda@Edge function is the same as a regular Lambda function. There are some limitations on region, environment variables, and runtime that can come into play in some cases. You can read more about these [restrictions here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/edge-functions-restrictions.html#lambda-at-edge-function-restrictions).
 
 Thus, you can use LaunchDarkly within a Lambda@Edge function just as you would inside a regular Lambda function using the [LaunchDarkly server-side Node SDK](https://docs.launchdarkly.com/sdk/server-side/node-js), which can be installed via npm:
 
@@ -45,7 +45,7 @@ exports.handler = async (event) => {
 }
 ```
 
-Once the initialization is complete, you are free to get flag values. The example below is getting a variation for the "my-first-flag" flag and using the client IP address a key for the user data. Variations in the LaunchDarkly platform are the different values a flag thats been created might return. You can pass whatever data about the user that you like within the user object. This can be used to target a user through targeting rules you set within the LaunchDarkly dashboard or for doing things like percentage rollouts.
+Once the initialization is complete, you are free to get flag values. The example below is getting a variation for the "my-first-flag" flag and using the client IP address as a key for the user data. Variations in the LaunchDarkly platform are the different values a flag that has been created might return. You can pass whatever data about the user that you like within the user object. This can be used to target a user through targeting rules you set within the LaunchDarkly dashboard or for doing things like percentage rollouts.
 
 ```javascript
 let myFirstFlag = await client.variation(
